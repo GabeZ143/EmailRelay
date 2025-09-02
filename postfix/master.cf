@@ -22,27 +22,12 @@ scache    unix  -       -       n       -       1       scache
 proxymap  unix  -       -       n       -       -       proxymap
 proxywrite unix -       -       n       -       1       proxymap
 
-# ================= Your listener ports =================
-# Port 25 (optional for LAN test; keeps AUTH/filters consistent)
-smtp      inet  n       -       n       -       -       smtpd
-  -o smtpd_sasl_auth_enable=no
-  -o smtpd_tls_security_level=may
-  -o milter_macro_daemon_name=ORIGINATING
 
 # Submission (587): STARTTLS + AUTH required
-# -o smtpd_tls_security_level=encrypt
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_auth_only=yes
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
-  -o milter_macro_daemon_name=ORIGINATING
   -o smtpd_tls_ask_ccert=no
   -o smtpd_tls_req_ccert=no
-
-# SMTPS (465): implicit TLS + AUTH required (optional)
-smtps     inet n       -       n       -       -       smtpd
-  -o smtpd_tls_wrappermode=yes
-  -o smtpd_sasl_auth_enable=yes
-  -o smtpd_client_restrictions=permit_sasl_authenticated,reject
-  -o milter_macro_daemon_name=ORIGINATING
