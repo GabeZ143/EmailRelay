@@ -1,0 +1,95 @@
+########################################
+# Identity & networking
+########################################
+# Must match the cert CN/SAN and what you put in the M365 connector
+myhostname = trailer.infraspec.io        
+myorigin = $myhostname
+mydestination =                            
+inet_interfaces = all
+inet_protocols = ipv4          
+
+# Identify your LAN
+mynetworks = 192.168.99.0/24, 127.0.0.0/8
+
+########################################
+# Security: only relay for authenticated clients (your cameras)
+########################################
+smtpd_relay_restrictions = permit_sasl_authenticated, reject
+smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination
+
+########################################
+# SASL (server-side) for SUBMISSION (clients authenticate)
+########################################
+#smtpd_sasl_auth_enable = yes
+smtpd_sasl_type = cyrus
+smtpd_sasl_path = smtpd
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain =
+
+smtpd_sasl_auth_enable = no
+smtpd_tls_security_level = may
+smtpd_tls_ask_ccert = no
+smtpd_tls_req_ccert = no
+
+########################################
+# TLS for inbound submission (what cameras see)
+########################################
+smtpd_tls_cert_file = /etc/ssl/private/relay.fullchain.pem
+smtpd_tls_key_file  = /etc/ssl/private/relay.privkey.pem
+# require STARTTLS on 587
+# smtpd_tls_security_level = encrypt 
+# only allow AUTH after TLS         
+# smtpd_tls_auth_only = yes
+
+# test with openssl
+smtpd_tls_ask_ccert = no
+smtpd_tls_req_ccert = no
+
+########################################
+# Alias expansion (editable recipient lists)
+########################################
+virtual_alias_domains = infraspec.io
+virtual_alias_maps = texthash:/etc/postfix/virtual
+
+########################################
+# Outbound relay to Microsoft 365 via mutual TLS
+########################################
+# Use your tenant's EOP smart host (MX form)
+relayhost = [smtp.office365.com]:587
+
+# Present client certificate so the M365 connector can verify us by cert subject
+smtp_tls_cert_file = /etc/ssl/private/relay.fullchain.pem
+smtp_tls_key_file  = /etc/ssl/private/relay.privkey.pem
+smtp_tls_CAfile    = /etc/ssl/certs/ca-certificates.crt
+
+# (No SASL to Microsoft; the connector authenticates us by our TLS cert)
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = texthash:/etc/postfix/sasl_passwd
+smtp_sasl_mechanism_filter = login, plain
+smtp_sasl_security_options = noanonymous
+
+smtp_tls_security_level = encrypt
+
+########################################
+# Reasonable defaults
+########################################
+smtp_tls_loglevel = 2
+smtp_helo_name = $myhostname
+default_destination_concurrency_limit = 20
+maximal_queue_lifetime = 4d
+bounce_queue_lifetime = 1d
+
+alias_maps = 
+alias_database = 
+virtual_lmdb_alias_maps = 
+virtual_ldap_alias_maps = 
+virtual_mysql_alias_maps = 
+virtual_regexp_alias_maps = 
+virtual_lmdb_mailbox_maps = 
+virtual_ldap_mailbox_maps = 
+virtual_mysql_mailbox_maps = 
+virtual_mailbox_maps = $virtual_lmdb_mailbox_maps $virtual_ldap_mailbox_maps $virtual_mysql_mailbox_maps
+virtual_mailbox_base = /var/mail
+virtual_uid_maps = static:100
+virtual_gid_maps = static:101
+smtpd_tls_loglevel = 2

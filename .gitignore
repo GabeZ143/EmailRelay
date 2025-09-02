@@ -1,0 +1,31 @@
+# Secrets
+sasl_passwd
+sasl_passwd.*
+sasldb2
+sasldb2.*
+
+# TLS certs & keys
+*.pem
+certs/
+*.crt
+*.key
+
+# Postfix generated maps
+*.db
+*.lmdb
+dynamicmaps.cf.d
+
+# Postfix generated
+postfix-files
+
+# Logs & spool
+*.log
+maillog*
+/var/log/
+/var/spool/
+
+# Editor junk
+*~
+*.swp
+*.bak
+.DS_Store
