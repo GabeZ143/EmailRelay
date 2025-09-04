@@ -11,8 +11,13 @@ permissions:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    env:
+      OWNER_LC: ${{ github.repository_owner }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Force lowercase owner
+        run: echo "OWNER_LC=${OWNER_LC,,}" >> $GITHUB_ENV
 
       - uses: docker/setup-qemu-action@v3
 
@@ -29,8 +34,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/postfix-relay:latest
-            ghcr.io/${{ toLower(github.repository_owner) }}/postfix-relay:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC) }}/postfix-relay:latest
+            ghcr.io/${{ env.OWNER_LC) }}/postfix-relay:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
