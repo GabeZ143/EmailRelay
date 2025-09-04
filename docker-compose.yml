@@ -1,0 +1,22 @@
+services:
+  postfix:
+    build: .
+    image: postfix-relay:dev
+    ports:
+      - "587:587"
+    restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - ./postfix:/etc/postfix:ro
+      - ./sasl:/etc/sasl2:ro
+      - ./secrets/sasldb2:/etc/sasldb2:ro
+      - ./secrets/certs:/etc/ssl/postfix:ro
+      - ./secrets/virtual:/etc/postfix/virtual:ro
+    
+    secrets:
+      - sasl_passwd
+
+secrets:
+  sasl_passwd:
+    file: ./secrets/sasl_passwd
