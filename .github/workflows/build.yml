@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Force lowercase owner
+        shell: bash
         run: echo "OWNER_LC=${OWNER_LC,,}" >> $GITHUB_ENV
 
       - uses: docker/setup-qemu-action@v3
