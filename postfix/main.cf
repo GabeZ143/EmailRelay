@@ -14,8 +14,8 @@ smtpd_relay_restrictions = permit_sasl_authenticated, reject
 smtpd_sasl_type = cyrus
 smtpd_sasl_path = smtpd
 smtpd_sasl_security_options = noanonymous
-smtpd_tls_cert_file = /etc/ssl/private/relay.fullchain.pem
-smtpd_tls_key_file  = /etc/ssl/private/relay.privkey.pem
+smtpd_tls_cert_file = /etc/ssl/postfix/server.crt
+smtpd_tls_key_file  = /etc/ssl/postfix/server.key
 
 # ===== Virtual alias fan-out =====
 virtual_alias_domains = infraspec.io
@@ -25,7 +25,7 @@ virtual_alias_maps    = texthash:/etc/postfix/virtual
 relayhost = [smtp.office365.com]:587
 
 smtp_sasl_auth_enable = yes
-smtp_sasl_password_maps = texthash:/etc/postfix/sasl_passwd
+smtp_sasl_password_maps = texthash:/run/secrets/sasl_passwd
 smtp_sasl_mechanism_filter = login, plain
 smtp_sasl_security_options = noanonymous
 
@@ -33,8 +33,8 @@ smtp_tls_security_level = encrypt
 smtp_tls_CAfile    = /etc/ssl/certs/ca-certificates.crt
 
 # Present client certificate so the M365 connector can verify us by cert subject
-# smtp_tls_cert_file = /etc/ssl/private/relay.fullchain.pem
-# smtp_tls_key_file  = /etc/ssl/private/relay.privkey.pem
+# smtp_tls_cert_file = /etc/ssl/postfix/server.crt
+# smtp_tls_key_file  = /etc/ssl/postfix/server.key
 
 # ===== Logging (turn down later if you want) =====
 smtp_tls_loglevel = 1

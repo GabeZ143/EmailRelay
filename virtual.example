@@ -1,0 +1,5 @@
+# First text hash
+nvr@yourcompany.com      techops@yourcompany.com, oncall@yourcompany.com
+
+# You can have multiple lists:
+nvr@secondcompany.com      techops@secondcompany.com, oncall@secondcompany.com

@@ -8,7 +8,8 @@ services:
     environment:
       - TZ=America/Los_Angeles
     volumes:
-      - ./postfix:/etc/postfix:ro
+      - ./postfix/main.cf:/etc/postfix/main.cf:ro
+      - ./postfix/master.cf:/etc/postfix/master.cf:ro
       - ./sasl:/etc/sasl2:ro
       - ./secrets/sasldb2:/etc/sasldb2:ro
       - ./secrets/certs:/etc/ssl/postfix:ro
