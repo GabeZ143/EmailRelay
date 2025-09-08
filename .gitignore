@@ -4,3 +4,4 @@ secrets/
 *.db
 *.lmdb
 logs/
+site.env
