@@ -1,7 +1,7 @@
 services:
   postfix:
     build: .
-    image: postfix-relay:dev
+    image: ghcr.io/gabez143/postfix-relay:latest
     ports:
       - "587:587"
     restart: unless-stopped

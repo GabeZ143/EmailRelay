@@ -38,7 +38,7 @@ fi
 if [ -n "${INBOUND_USER:-}" ] && [ -n "${INBOUND_PASS:-}" ] && [ -n "${INBOUND_REALM:-}" ]; then
   echo ">> Creating/updating ${INBOUND_USER}@${INBOUND_REALM} in sasldb2"
   # feed password twice via stdin (-p)
-  printf "%s\n%s\n" "$INBOUND_PASS" "$INBOUND_PASS" | sudo docker run --rm -i \
+  echo $INBOUND_PASS | sudo docker run --rm -i \
     -e INBOUND_REALM="$INBOUND_REALM" \
     -e INBOUND_USER="$INBOUND_USER" \
     -v "$(pwd)/secrets:/secrets" \
