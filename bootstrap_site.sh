@@ -12,9 +12,8 @@ set +o allexport
 
 SECRETS="./secrets"
 CERTS_DIR="$SECRETS/certs"
-LE_DIR="${LE_ROOT:-/opt/letsencrypt}"
 
-mkdir -p "$SECRETS" "$CERTS_DIR" "$LE_DIR"
+mkdir -p "$SECRETS" "$CERTS_DIR" 
 
 # 1) Create outbound M365 secret map (idempotent: create once)
 SASL_FILE="$SECRETS/sasl_passwd"
@@ -22,11 +21,9 @@ if [ -f "$SASL_FILE" ]; then
   echo ">> $SASL_FILE exists; leaving as-is"
 else
   echo ">> Writing $SASL_FILE"
-  umask 077
   cat > "$SASL_FILE" <<EOF
 [smtp.office365.com]:587 ${M365_USER}:${M365_PASS}
 EOF
-  chmod 600 "$SASL_FILE"
 fi
 
 # 2) Ensure virtual map exists (edit later as needed)
@@ -46,7 +43,7 @@ if [ -n "${INBOUND_USER:-}" ] && [ -n "${INBOUND_PASS:-}" ] && [ -n "${INBOUND_R
     -e INBOUND_USER="$INBOUND_USER" \
     -v "$(pwd)/secrets:/secrets" \
     ghcr.io/gabez143/postfix-relay:latest \
-    sh -lc 'saslpasswd2 -c -p -f /secrets/sasldb2 -u "$INBOUND_REALM" "$INBOUND_USER" && chmod 600 /secrets/sasldb2'
+    sh -lc 'saslpasswd2 -c -p -f /secrets/sasldb2 -u "$INBOUND_REALM" "$INBOUND_USER"'
 else
   echo ">> Skipping sasldb2 (INBOUND_* not fully set)"
 fi
@@ -59,7 +56,6 @@ if [ ! -f "$CERTS_DIR/server.crt" ] || [ ! -f "$CERTS_DIR/server.key" ]; then
     -out    "$CERTS_DIR/server.crt" \
     -subj "/CN=$MYHOSTNAME" \
     -addext "subjectAltName=DNS:$MYHOSTNAME"
-  chmod 600 "$CERTS_DIR/server.key"
 else
   echo ">> Using existing cert/key at $CERTS_DIR"
 fi
@@ -74,7 +70,6 @@ Next:
    - ./secrets/sasl_passwd -> /run/secrets/sasl_passwd:ro
    - ./secrets/virtual -> /etc/postfix/virtual:ro
    - ./secrets/certs -> /etc/ssl/postfix:ro
-   - ${LE_DIR} -> /opt/letsencrypt:ro  (only if using Let's Encrypt later)
 
 2) Start (or redeploy) Postfix:
    docker compose up -d
