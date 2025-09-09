@@ -41,9 +41,11 @@ if [ -n "${INBOUND_USER:-}" ] && [ -n "${INBOUND_PASS:-}" ] && [ -n "${INBOUND_R
   echo $INBOUND_PASS | sudo docker run --rm -i \
     -e INBOUND_REALM="$INBOUND_REALM" \
     -e INBOUND_USER="$INBOUND_USER" \
-    -v "$(pwd)/secrets:/secrets" \
+    -v "./secrets:/secrets" \
     ghcr.io/gabez143/postfix-relay:latest \
     sh -lc 'saslpasswd2 -c -p -f /secrets/sasldb2 -u "$INBOUND_REALM" "$INBOUND_USER"'
+  chown 0:101 ./secrets/sasldb2
+  chmod 640 ./secrets/sasldb2
 else
   echo ">> Skipping sasldb2 (INBOUND_* not fully set)"
 fi
