@@ -4,11 +4,6 @@ myorigin = $myhostname
 mydestination =
 inet_interfaces = all
 inet_protocols = ipv4
-mynetworks = 192.168.99.0/24, 127.0.0.0/8
-
-# ===== Inbound SMTP policy (defaults; detailed 587 rules live in master.cf) =====
-smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination
-smtpd_relay_restrictions = permit_sasl_authenticated, reject
 
 # TLS keys for inbound (587). Not strictly needed for outbound to M365.
 smtpd_sasl_type = cyrus

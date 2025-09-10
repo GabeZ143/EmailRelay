@@ -30,7 +30,7 @@ fi
 if [ ! -f "$SECRETS/virtual" ]; then
   echo ">> Creating example virtual map"
   cat > "$SECRETS/virtual" <<'EOF'
-alerts@infraspec.io user1@example.com, user2@example.com
+alerts@infraspec.io   user1@example.com, user2@example.com
 EOF
 fi
 
