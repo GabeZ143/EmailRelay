@@ -1,5 +1,5 @@
 # ===== Identity & networking =====
-myhostname = trailer.infraspec.io
+myhostname = relay.infraspec.io
 myorigin = $myhostname
 mydestination =
 inet_interfaces = all
@@ -34,7 +34,15 @@ smtp_tls_CAfile    = /etc/ssl/certs/ca-certificates.crt
 # ===== Logging (turn down later if you want) =====
 smtp_tls_loglevel = 1
 smtpd_tls_loglevel = 1
+smtp_tls_note_starttls_offer = yes
 smtp_helo_name = $myhostname
+
+# send Postfix logs straight to the container stdout
+maillog_file = /dev/stdout
+
+# Verbose just for Office 365 SMTP client traffic
+debug_peer_list = smtp.office365.com
+debug_peer_level = 3
 
 # Reasonable defaults
 default_destination_concurrency_limit = 20

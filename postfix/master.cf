@@ -22,6 +22,8 @@ scache    unix  -       -       n       -       1       scache
 proxymap  unix  -       -       n       -       -       proxymap
 proxywrite unix -       -       n       -       1       proxymap
 
+#Logging
+postlog   unix-dgram n  -       n       -       1       postlogd
 
 # Submission (587): STARTTLS + AUTH required
 submission inet n       -       n       -       -       smtpd
