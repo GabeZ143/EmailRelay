@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+
+#check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run with sudo."
+   echo "Please run: sudo $0 $*"
+   exit 1
+fi
+
 set -euo pipefail
 
 ENV_FILE="${1:-./site.env}"
@@ -38,7 +46,7 @@ fi
 if [ -n "${INBOUND_USER:-}" ] && [ -n "${INBOUND_PASS:-}" ] && [ -n "${INBOUND_REALM:-}" ]; then
   echo ">> Creating/updating ${INBOUND_USER}@${INBOUND_REALM} in sasldb2"
   # feed password twice via stdin (-p)
-  echo $INBOUND_PASS | sudo docker run --rm -i \
+  echo $INBOUND_PASS | docker run --rm -i \
     -e INBOUND_REALM="$INBOUND_REALM" \
     -e INBOUND_USER="$INBOUND_USER" \
     -v "./secrets:/secrets" \
@@ -58,6 +66,11 @@ if [ ! -f "$CERTS_DIR/server.crt" ] || [ ! -f "$CERTS_DIR/server.key" ]; then
     -out    "$CERTS_DIR/server.crt" \
     -subj "/CN=$MYHOSTNAME" \
     -addext "subjectAltName=DNS:$MYHOSTNAME"
+  chown 0:101 "$CERTS_DIR/server.key"
+  chmod 640   "$CERTS_DIR/server.key"
+
+  chown 0:101 "$CERTS_DIR/server.crt"
+  chmod 640   "$CERTS_DIR/server.crt"
 else
   echo ">> Using existing cert/key at $CERTS_DIR"
 fi
